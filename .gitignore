@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+node_modules
+config.js
+client/dist/bundle.js
+# testing
+#  after you pull, you must uncomment your testing git ignore.
+=======
 # Logs
 logs
 *.log
@@ -102,3 +109,4 @@ dist
 
 # TernJS port file
 .tern-port
+>>>>>>> d0a4d341934a583eaf1a05850478d737494f6e83
