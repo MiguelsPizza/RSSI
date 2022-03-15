@@ -9,6 +9,9 @@ import { useCollectionData } from "react-firebase-hooks/firestore";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Container from "react-bootstrap/Container";
+import styled from "styled-components";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA6V10s47nKkBakTxMupMXA4VaRyIpI0Xs",
@@ -27,7 +30,16 @@ const firestore = getFirestore();
 const App = () => {
   const [user] = useAuthState(auth);
 
-  return <div>{user ? <MainPage /> : <SignIn />}</div>;
+  const Div = styled.div`
+    &&& {
+      background: black;
+      box-sizing:border-box !important;
+      margin:0 !important;
+      padding:0 !important;
+    }
+  `;
+
+  return <Div>{user ? <MainPage /> : <SignIn />}</Div>;
 };
 
 export default App;
@@ -43,7 +55,7 @@ function SignIn() {
       <div className="container py-5 h-100">
         <div className="row d-flex justify-content-center align-items-center h-100">
           <div className="col-12 col-md-8 col-lg-6 col-xl-5">
-            <div className="card shadow-2-strong" >
+            <div className="card shadow-2-strong">
               <div className="card-body p-5 text-center">
                 <h3 className="mb-5">Sign in</h3>
                 <div className="form-outline mb-4">
@@ -87,8 +99,6 @@ function SignIn() {
                   Login
                 </button>
 
-
-
                 <button
                   className="btn btn-lg btn-block btn-primary"
                   // style="background-color: #dd4b39"
@@ -115,4 +125,3 @@ function SignIn() {
 }
 /* <hr className="my-4"> */
 //style="border-radius: 1rem;"
-
