@@ -2,14 +2,22 @@ import React, { useState, useEffect } from "react";
 import MainB from "./RSSI/MainB.jsx";
 import TopBar from "./RSSI/TopBar.jsx";
 import SideBar from "./RSSI/SideBar/SideBar.jsx";
-
+import {
+  getFirestore,
+  collection,
+  query,
+  doc,
+  setDoc,
+  getDoc
+} from "firebase/firestore";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
-const MainPage = () => {
+const MainPage = ({ auth, firestore }) => {
   const [networks, setNetworks] = useState([]);
   const [autoFetch, ToggleAutoFetch] = useState(false);
+  const[knownNetworks, setKnowNetworks] =useState([])
 
   const updateNetworksData = (data) => {
     if (data) {
@@ -46,6 +54,34 @@ const MainPage = () => {
     }
   }, [autoFetch]);
 
+  useEffect(() => {
+    const getUserData = async () => {
+      const db = getFirestore();
+      const docRef = doc(db, "Users", auth.currentUser.uid);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+
+        console.log("Document data:", docSnap.data());
+        setKnowNetworks(docSnap.data().networks)
+      } else {
+        // doc.data() will be undefined in this case
+        const userData = {
+          UID: auth.currentUser.uid,
+          email: auth.currentUser.email,
+          userName: auth.currentUser.displayName,
+        };
+        await setDoc(
+          doc(db, "Users", auth.currentUser.uid),
+          userData,
+          { merge: true }
+        );
+        console.log("added user");
+      }
+
+    };
+    getUserData();
+  }, [auth]);
+
   return (
     <Container className="bg-light" style={{ height: "1500px", width: "100%" }}>
       <Row>
@@ -60,6 +96,7 @@ const MainPage = () => {
           ToggleAutoFetch={ToggleAutoFetch}
           autoFetch={autoFetch}
           updateNetworksData={updateNetworksData}
+          knownNetworks={knownNetworks}
         />
       </Row>
     </Container>
