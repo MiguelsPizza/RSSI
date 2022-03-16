@@ -8,13 +8,13 @@ function SideBarItem({ network, eventKey }) {
     let color;
     if (value === 0) {
       color = "";
-    } else if (value >= 1 && value < 25) {
+    } else if (value >= 1 && value < 80) {
       color = "red";
-    } else if (value >= 25 && value < 50) {
+    } else if (value >= 80 && value < 90) {
       color = "orange";
-    } else if (value >= 50 && value < 90) {
+    } else if (value >= 90 && value < 100) {
       color = "yellow";
-    } else if (value >= 90) {
+    } else if (value >= 100) {
       color = "green";
     }
     return color;

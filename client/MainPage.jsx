@@ -47,7 +47,7 @@ const MainPage = () => {
   }, [autoFetch]);
 
   return (
-    <Container className="bg-light" style={{ height: "1000px" }}>
+    <Container className="bg-light" style={{ height: "1500px", width: "100%" }}>
       <Row>
         <TopBar />
       </Row>

@@ -13,6 +13,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Container from "react-bootstrap/Container";
 import styled from "styled-components";
 
+
 const firebaseConfig = {
   apiKey: "AIzaSyA6V10s47nKkBakTxMupMXA4VaRyIpI0Xs",
   authDomain: "findfi-15087.firebaseapp.com",
@@ -29,11 +30,12 @@ const firestore = getFirestore();
 
 const App = () => {
   const [user] = useAuthState(auth);
-
+//box-sizing:border-box !important;
   const Div = styled.div`
     &&& {
       background: black;
-      box-sizing:border-box !important;
+      min-width: 100%;
+      min-height: 100%;
       margin:0 !important;
       padding:0 !important;
     }
@@ -45,14 +47,29 @@ const App = () => {
 export default App;
 
 function SignIn() {
+  const Styledh1 = styled.h1`
+  &&& {
+    color: blue;
+    margin:0px !important;
+    padding:0px !important;
+    position: relative;
+    font-family: "Raleway", sans-serif;
+    font-weight: 300;
+    font-size: 200px;
+    transition: all 0.4s ease 0s;
+    text-align: center;
+  }
+`;
   const signInWithGoogle = () => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider);
   };
   //style="background-color: #508bfc;"}
   return (
+    <>
+    <Styledh1>Find-Fi</Styledh1>
     <section className="vh-100">
-      <div className="container py-5 h-100">
+      <div className="container h-100">
         <div className="row d-flex justify-content-center align-items-center h-100">
           <div className="col-12 col-md-8 col-lg-6 col-xl-5">
             <div className="card shadow-2-strong">
@@ -121,6 +138,7 @@ function SignIn() {
         </div>
       </div>
     </section>
+    </>
   );
 }
 /* <hr className="my-4"> */
