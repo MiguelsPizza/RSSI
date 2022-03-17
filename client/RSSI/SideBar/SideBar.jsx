@@ -11,7 +11,7 @@ import AddNetworkModal from "./AddNetworkModal.jsx";
 
 // const cityRef = doc(db, 'cities', 'BJ');
 // setDoc(cityRef, { capital: true }, { merge: true });
-
+//
 function SideBar({
   networks,
   ToggleAutoFetch,
@@ -109,6 +109,6 @@ function SideBar({
   );
 }
 //{networkToAdd && <addNetworkModal networkToAdd={networkToAdd}/>}
-console.log('addNetworkModal', AddNetworkModal)
+// console.log('addNetworkModal', AddNetworkModal)
 
 export default SideBar;

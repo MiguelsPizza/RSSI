@@ -97,3 +97,15 @@ app.get("/auto", (req, res) => {
   };
   setInterval(updateConections, 1000);
 });
+
+
+app.post("/connect", (req, res) =>{
+  console.log('req.body', req.body)
+  wifi.connect({ ssid: req.body.ssid, password: req.body.password }, () => {
+    res.send('failed to connect')
+    // console.log('Connected');
+    // on windows, the callback is called even if the connection failed due to netsh limitations
+    // if your software may work on windows, you should use `wifi.getCurrentConnections` to check if the connection succeeded
+  });
+
+})
