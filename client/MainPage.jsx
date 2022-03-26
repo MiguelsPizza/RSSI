@@ -115,15 +115,14 @@ const MainPage = ({ auth, firestore }) => {
         />}
                 { currentTab ==="WifiMap" && <WifiMap
           networks= {networks}
-          ToggleAutoFetch={ToggleAutoFetch}
-          autoFetch={autoFetch}
+
           updateNetworksData={updateNetworksData}
           knownNetworks={knownNetworks}
         />}
                 { currentTab ==="FriendsList" && <FriendsList
           networks= {networks}
-          ToggleAutoFetch={ToggleAutoFetch}
-          autoFetch={autoFetch}
+          auth={auth}
+
           updateNetworksData={updateNetworksData}
           knownNetworks={knownNetworks}
         />}

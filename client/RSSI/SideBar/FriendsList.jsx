@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import SideBarItem from "./SideBarItem.jsx";
+import React, { useState, useEffect } from "react";
+import FriendsListItem from "./FriendsListItem.jsx";
 import Accordion from "react-bootstrap/Accordion";
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
@@ -8,20 +8,25 @@ import styled from "styled-components";
 import Container from "react-bootstrap/Container";
 import Navbar from "react-bootstrap/Navbar";
 import AddNetworkModal from "./AddNetworkModal.jsx";
+import {
+  getFirestore,
+  collection,
+  query,
+  doc,
+  setDoc,
+  getDoc,
+} from "firebase/firestore";
+import ListGroup from "react-bootstrap/ListGroup";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
 
 // const cityRef = doc(db, 'cities', 'BJ');
 // setDoc(cityRef, { capital: true }, { merge: true });
 //
-function FriendsList({
-  networks,
-  ToggleAutoFetch,
-  autoFetch,
-  updateNetworksData,
-  knownNetworks,
-}) {
+function FriendsList({ networks, auth, updateNetworksData, knownNetworks }) {
   const [rememberAuto, setRemeberAuto] = useState(null);
   const [networkToAdd, setnetworkToAdd] = useState(false);
-  console.log('modal toggle',!!networkToAdd)
+  console.log("modal toggle", !!networkToAdd);
+  const db = getFirestore();
   let counter = 0;
   // ${getBackgroundColor(network.quality)}
   const StyledDiv = styled.div`
@@ -41,17 +46,59 @@ function FriendsList({
       ToggleAutoFetch(true);
     }
   };
+  const [friendsList, setFriendsList] = useState({});
+  const [data, setData] = useState(null);
 
+  useEffect(() => {
+    const getFriendsList = async () => {
+      const docRef = doc(db, "Users", auth.currentUser.uid);
+      const docSnap = await getDoc(docRef);
+      const arr = [];
+      console.log("friends", docSnap.data());
+      const userData = docSnap.data();
+      setFriendsList(userData.friends);
+      userData.friends.forEach((friend) => {
+        const doStuff = async () => {
+          const id = friend.trim();
+          console.log("id", id);
+          const docFriend = doc(db, "Users", id);
+          const docFriendSnap = await getDoc(docFriend);
+          const temp = docFriendSnap.data();
+          console.log("docFriendSnap.data()", docFriendSnap.data());
+          setData(temp);
+        };
+        doStuff();
+      });
+    };
+    getFriendsList();
+  }, []);
+  const [requestedacc, setAcc] = useState("Request Accsess");
+  const [event, setEvent] = useState(0);
+
+  const test = async () => {
+    const body = {};
+    const serverResponse = await fetch("/request", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: JSON.stringify(body),
+    });
+  };
   // console.log('auth', auth)
 
   //onMouseLeave={() => decideToggleFetch}
   return (
     <Container style={{ width: "100%" }}>
       <Navbar bg="dark" variant="dark">
-      <AddNetworkModal networkToAdd={networkToAdd} setnetworkToAdd={setnetworkToAdd} />
+        <AddNetworkModal
+          networkToAdd={networkToAdd}
+          setnetworkToAdd={setnetworkToAdd}
+        />
         <Container>
           <Navbar.Brand>
-            <Styledh3>AVAILBLE NETWORKS</Styledh3>
+            <Styledh3>FriendsList</Styledh3>
           </Navbar.Brand>
           <Navbar.Text className="justify-content-end">
             <Row>
@@ -60,51 +107,36 @@ function FriendsList({
                   {networks.length > 0 ? "Refresh" : "Loading..."}
                 </Button>
               </Col>
-              <Col>
-                <Button onClick={() => ToggleAutoFetch(!autoFetch)}>
-                  {autoFetch ? "Turn off Auto Fetch" : "Turn on Auto Fetch"}
-                </Button>
-              </Col>
             </Row>
           </Navbar.Text>
         </Container>
       </Navbar>
       <StyledDiv>
         <Accordion>
-          {networks.map((network) => {
-            const markedKnown = knownNetworks.filter((knowNetwork) => {
-              if (network.ssid === "NETGEAR34-5G") {
-                console.log("knowNetwork", knowNetwork.ssid.length);
-                console.log("network", network.ssid.length);
-                console.log(
-                  "knowNetwork[network.ssid]",
-                  knowNetwork.ssid.trim() === network.ssid.trim()
-                );
-              }
-              return knowNetwork.ssid.trim() === network.ssid.trim();
-            });
-            if (markedKnown.length > 0) {
-              return (
-                <SideBarItem
-                  network={network}
-                  eventKey={counter++}
-                  known={true}
-                />
-              );
-            } else {
-              return (
-                <SideBarItem
-                  network={network}
-                  eventKey={counter++}
-                  known={false}
-                  setnetworkToAdd={setnetworkToAdd}
-                />
-              );
-            }
-          })}
+          <Accordion.Item eventKey={event}>
+            <Accordion.Header>{data && data?.username}</Accordion.Header>
+            <Accordion.Body>
+              <ListGroup horizontal>
+                <ListGroup.Item>
+                  {data && data?.networks[0].ssid}
+                </ListGroup.Item>
+              </ListGroup>
+              <ButtonGroup aria-label="Basic example">
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    setAcc("Requested");
+                    test();
+                    setEvent(1);
+                  }}
+                >
+                  {requestedacc}
+                </Button>
+              </ButtonGroup>
+            </Accordion.Body>
+          </Accordion.Item>
         </Accordion>
       </StyledDiv>
-
     </Container>
   );
 }
