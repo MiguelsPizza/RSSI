@@ -3,14 +3,17 @@ const app = express();
 const path = require("path");
 const wifi = require("node-wifi");
 const _ = require("lodash");
+
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+const nodemailer = require('nodemailer');
+const cors = require('cors')({origin: true});
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
   console.log(`The app server is running on port: ${port}`);
 });
-wifi.init({
-  iface: null, // network interface, choose a random wifi interface if set to null
-});
+
 // const DIST_DIR = path.join(__dirname, "dist");
 // const HTML_FILE = path.join(DIST_DIR, "index.html");
 
@@ -18,7 +21,47 @@ app.use(express.json());
 // app.use(express.static("public"));
 app.use(express.static(__dirname + "/../client/dist"));
 
+
+
+
+app.post('/request', (req,res) =>{
+
+
+  async function main() {
+    let testAccount = await nodemailer.createTestAccount();
+    let transporter = nodemailer.createTransport({
+      host: "smtp.ethereal.email",
+      port: 587,
+      secure: false,
+      auth: {
+        user: testAccount.user,
+        pass: testAccount.pass,
+      },
+    });
+
+
+    let info = await transporter.sendMail({
+      from: 'alexmnahas@gmail.com',
+      to: "alexmnahas@gmail.com",
+      subject: "request ✔",
+      text: "request for accsess",
+      html: "<b>Hello world?</b>",
+    });
+
+    console.log("Message sent: %s", info.messageId);
+    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+  }
+
+  main().catch(console.error);
+})
+
+
+
+
 app.get("/rssi", (req, res) => {
+  wifi.init({
+    iface: null, // network interface, choose a random wifi interface if set to null
+  });
   console.log("req.url", req.url);
   if (req.url === "/rssi") {
     res.setHeader("Content-Type", "text/event-stream");
@@ -40,6 +83,9 @@ app.get("/rssi", (req, res) => {
 });
 
 app.get("/intialLoadrssi", (req, res) => {
+  wifi.init({
+    iface: null, // network interface, choose a random wifi interface if set to null
+  });
 
     const sendRssi = () => {
       wifi.getCurrentConnections((error, currentConnections) => {
@@ -55,6 +101,9 @@ app.get("/intialLoadrssi", (req, res) => {
 });
 
 app.get("/currentConections", (req, res) => {
+  wifi.init({
+    iface: null, // network interface, choose a random wifi interface if set to null
+  });
   wifi.scan((error, networks) => {
     if (error) {
       console.log(error);
@@ -74,6 +123,9 @@ app.get("/currentConections", (req, res) => {
 });
 
 app.get("/auto", (req, res) => {
+  wifi.init({
+    iface: null, // network interface, choose a random wifi interface if set to null
+  });
   res.setHeader("Content-Type", "text/event-stream");
 
   const updateConections = () => {
@@ -101,6 +153,9 @@ app.get("/auto", (req, res) => {
 
 app.post("/connect", (req, res) =>{
   console.log('req.body', req.body)
+  wifi.init({
+    iface: null, // network interface, choose a random wifi interface if set to null
+  });
   wifi.connect({ ssid: req.body.ssid, password: req.body.password }, () => {
     res.send('failed to connect')
     // console.log('Connected');

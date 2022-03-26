@@ -77,7 +77,6 @@ const MainButton = () => {
         <Card.Text>{rssi}</Card.Text>
           <Animation toggle={toggle} changeToggle={changeToggle}/>
       </Card.Body>
-      <Card.Footer className="text-muted">2 days ago</Card.Footer>
     </Card>
   );
 };
